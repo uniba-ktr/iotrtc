@@ -1,4 +1,4 @@
-FROM arm32v7/node:current-stretch-slim
+FROM node:current-stretch-slim
 
 WORKDIR /usr/src/app
 
