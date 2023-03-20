@@ -1,0 +1,24 @@
+version: '3.2'
+
+services:
+  nodered:
+    image: ghcr.io/uniba-ktr/iotrtc-nodered
+    restart: unless-stopped
+    container_name: nodered
+    build:
+      context: ./nodered
+      dockerfile: Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - nodered-data:/data
+    ports:
+      - 1880:1880
+
+  apprtc:
+    image: ghcr.io/uniba-ktr/iotrtc-apprtc
+    build:
+      context: ./apprtc
+      dockerfile: Dockerfile
+
+volumes:
+  nodered-data:

@@ -1,0 +1,116 @@
+[
+    {
+        "id": "daf99985.1a9be",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "9fe1f315.0e7a48",
+        "type": "rpi-gpio in",
+        "z": "daf99985.1a9be",
+        "name": "",
+        "pin": "7",
+        "intype": "down",
+        "debounce": "25",
+        "read": true,
+        "x": 70,
+        "y": 140,
+        "wires": [
+            [
+                "148e0912.3ba057"
+            ]
+        ]
+    },
+    {
+        "id": "148e0912.3ba057",
+        "type": "switch",
+        "z": "daf99985.1a9be",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 210,
+        "y": 140,
+        "wires": [
+            [
+                "c59fb60b.7de478"
+            ]
+        ]
+    },
+    {
+        "id": "c2035175.54c5e",
+        "type": "exec",
+        "z": "daf99985.1a9be",
+        "command": "docker run -e PUSH_HOST=localhost:3000 --rm --privileged --name apprtc apprtc",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 550,
+        "y": 60,
+        "wires": [
+            [
+                "24a188bb.23717"
+            ],
+            [
+                "24a188bb.23717"
+            ],
+            [
+                "24a188bb.23717"
+            ]
+        ]
+    },
+    {
+        "id": "24a188bb.23717",
+        "type": "debug",
+        "z": "daf99985.1a9be",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 850,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "c59fb60b.7de478",
+        "type": "exec",
+        "z": "daf99985.1a9be",
+        "command": "docker kill apprtc",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 430,
+        "y": 240,
+        "wires": [
+            [
+                "24a188bb.23717"
+            ],
+            [
+                "24a188bb.23717"
+            ],
+            [
+                "c2035175.54c5e",
+                "24a188bb.23717"
+            ]
+        ]
+    }
+]

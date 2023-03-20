@@ -1,0 +1,31 @@
+name: Docker Image CI
+
+env:
+  REGISTRY: ghcr.io
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        framework: [apprtc, nodered, proxy, webpush]
+
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set time
+      run: echo "BUILD_DATE=$(date +%s)" >> $GITHUB_ENV
+    - name: downcase REPO
+      run: echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+    - name: Checkout
+      uses: actions/checkout@v3.4.0
+    - name: Build the Docker image
+      run: docker build ./${{ matrix.framework }}/ --file ${{ matrix.framework }}/Dockerfile --tag ${{ env.REGISTRY }}/${{ env.REPO }}-${{ matrix.framework }}:${{ env.BUILD_DATE }}

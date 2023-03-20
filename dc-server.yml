@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  webpush:
+    image: ghcr.io/uniba-ktr/iotrtc-webpush
+    build:
+      context: ./webpush
+      dockerfile: Dockerfile
+    container_name: webpush
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+
+  ssl:
+    image: ghcr.io/uniba-ktr/iotrtc-proxy
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: proxy
+    environment:
+      - DOMAIN="www.hopethisworks.omg"
+      - TARGET_PORT=3000
+      - TARGET_HOST=webpush
+      - SSL_PORT=443
+    ports:
+      - 443:443
