@@ -1,0 +1,16 @@
+asyncio 
+aiohttp
+websockets
+attrs
+av
+cffi
+crc32c
+cryptography
+pyee
+pylibsrtp
+pyopenssl
+netifaces
+asn1crypto
+six
+aioice
+requests
