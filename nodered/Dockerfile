@@ -1,3 +1,5 @@
+FROM docker:dind AS dind
+
 FROM node:current-stretch-slim
 
 # add support for gpio library
@@ -12,8 +14,8 @@ WORKDIR /usr/src/node-red
 COPY package.json /usr/src/node-red/
 RUN npm install
 
-# install docker-ce-cli
-RUN wget https://download.docker.com/linux/debian/dists/stretch/pool/stable/armhf/docker-ce-cli_18.09.7~3-0~debian-stretch_armhf.deb && dpkg -i docker-ce-cli_18.09.7~3-0~debian-stretch_armhf.deb
+# Copy Docker CLI
+COPY --from=dind /usr/local/bin/docker /usr/local/bin/docker
 
 # User configuration directory volume
 EXPOSE 1880
