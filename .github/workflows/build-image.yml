@@ -2,14 +2,16 @@ name: Docker Image CI
 
 env:
   REGISTRY: ghcr.io
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 on:
   push:
     branches:
-      - main
+      - '**'
+      - '!main'
   pull_request:
     branches:
-      - main
+      - 'main'
 
 jobs:
 
@@ -19,13 +21,38 @@ jobs:
         framework: [apprtc, nodered, proxy, webpush]
 
     runs-on: ubuntu-latest
-    steps:
+    permissions:
+      contents: read
+      packages: write
 
-    - name: Set time
-      run: echo "BUILD_DATE=$(date +%s)" >> $GITHUB_ENV
-    - name: downcase REPO
-      run: echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
-    - name: Checkout
-      uses: actions/checkout@v3.4.0
-    - name: Build the Docker image
-      run: docker build ./${{ matrix.framework }}/ --file ${{ matrix.framework }}/Dockerfile --tag ${{ env.REGISTRY }}/${{ env.REPO }}-${{ matrix.framework }}:${{ env.BUILD_DATE }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.4.0
+
+      - name: downcase REPO
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4.3.0
+        with:
+          images: |
+            ${{ env.REGISTRY }}/${{ env.REPO }}-${{ matrix.framework }}
+      - name: Build and load image
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./${{ matrix.framework }}/
+          push: false
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Inspect Docker image
+        run: docker image inspect $(docker image ls --filter "label=org.opencontainers.image.title=iotrtc" -q)
