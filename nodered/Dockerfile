@@ -1,9 +1,9 @@
 FROM docker:dind AS dind
 
-FROM node:current-stretch-slim
+FROM node:current-bullseye-slim
 
 # add support for gpio library
-RUN apt update && apt install -y python-pip wget
+RUN apt update && apt install -y python3-pip wget
 RUN pip install RPi.GPIO
 
 # Home directory for Node-RED application source code and user data directory.
